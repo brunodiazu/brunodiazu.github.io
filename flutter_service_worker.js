@@ -12,7 +12,7 @@ const RESOURCES = {
 "assets/fonts/Raleway-SemiBold.ttf": "8a192102b50118c45033e53ce897f103",
 "assets/images/p1.png": "25a5297b2b92c43182ce2eea69f73dc4",
 "assets/images/profile.jpg": "d196f0b43e74c655d4fb0c0a6b521353",
-"assets/NOTICES": "a630bf91600814907a40676a06fe9469",
+"assets/NOTICES": "49f91c997f0ee93e50e62feec928e0fa",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "115e937bb829a890521f72d2e664b632",
 "assets/packages/social_media_buttons/fonts/SocialMediaIcons.ttf": "6483bf9fdd106eb77d6f3c04dfe35057",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
@@ -20,7 +20,7 @@ const RESOURCES = {
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "index.html": "f6f43a10dfd6b29c6fea9e109b4d58e1",
 "/": "f6f43a10dfd6b29c6fea9e109b4d58e1",
-"main.dart.js": "67b304efba1ec8c02147be6bf8e2ca47",
+"main.dart.js": "260424a67cbe906383dae33f12ddbd11",
 "manifest.json": "901967b2e6c9257c289629d8ca62320f"
 };
 
@@ -30,7 +30,7 @@ const CORE = [
   "/",
 "main.dart.js",
 "index.html",
-"assets/LICENSE",
+"assets/NOTICES",
 "assets/AssetManifest.json",
 "assets/FontManifest.json"];
 
@@ -112,7 +112,7 @@ self.addEventListener("fetch", (event) => {
   if (event.request.url == origin || event.request.url.startsWith(origin + '/#')) {
     key = '/';
   }
-  // If the URL is not the the RESOURCE list, skip the cache.
+  // If the URL is not the RESOURCE list, skip the cache.
   if (!RESOURCES[key]) {
     return event.respondWith(fetch(event.request));
   }
@@ -135,11 +135,11 @@ self.addEventListener("fetch", (event) => {
 self.addEventListener('message', (event) => {
   // SkipWaiting can be used to immediately activate a waiting service worker.
   // This will also require a page refresh triggered by the main worker.
-  if (event.message == 'skipWaiting') {
+  if (event.data === 'skipWaiting') {
     return self.skipWaiting();
   }
 
-  if (event.message = 'downloadOffline') {
+  if (event.message === 'downloadOffline') {
     downloadOffline();
   }
 });
@@ -159,8 +159,8 @@ async function downloadOffline() {
   }
   for (var resourceKey in Object.keys(RESOURCES)) {
     if (!currentContent[resourceKey]) {
-      resources.add(resourceKey);
+      resources.push(resourceKey);
     }
   }
-  return Cache.addAll(resources);
+  return contentCache.addAll(resources);
 }
